@@ -4,7 +4,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4201/`. The application will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
@@ -25,3 +25,64 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+## 1. Create Component, Module & Add Module Federation plugin
+
+```
+ng g c home
+
+ng g c todo
+
+ng g m todo
+
+ng add @angular-architects/module-federation
+
+```
+
+## 2. Expose the Module via Module Fedration Plugin
+
+```
+
+new ModuleFederationPlugin({
+      library: { type: "module" },
+
+      // For remotes (please adjust)
+      name: "mfe2",
+      filename: "remoteEntry.js",
+      exposes: {
+        "./todo.module": "./src/app/todo/todo.module.ts",
+      },
+
+      // For hosts (please adjust)
+      // remotes: {
+      //     "mfe1": "http://localhost:3000/remoteEntry.js",
+
+      // },
+
+      shared: share({
+        "@angular/core": {
+          singleton: true,
+          strictVersion: true,
+          requiredVersion: "auto",
+        },
+        "@angular/common": {
+          singleton: true,
+          strictVersion: true,
+          requiredVersion: "auto",
+        },
+        "@angular/common/http": {
+          singleton: true,
+          strictVersion: true,
+          requiredVersion: "auto",
+        },
+        "@angular/router": {
+          singleton: true,
+          strictVersion: true,
+          requiredVersion: "auto",
+        },
+
+        ...sharedMappings.getDescriptors(),
+      }),
+    })
+
+```
